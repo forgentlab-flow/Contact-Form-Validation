@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us</title>
+<style>
+  /* Tell the browser not to auto-apply dark mode colors to this page's controls */
+  html {
+    color-scheme: light;
+  }
+ 
+  /* Basic page styling to keep the form readable and centered */
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 30px 15px;
+  }
+ 
+  .form-wrapper {
+    max-width: 480px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 25px 30px;
+  }
+ 
+  h1 {
+    font-size: 22px;
+    margin-top: 0;
+  }
+ 
+  .field-group {
+    margin-bottom: 18px;
+  }
+ 
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+ 
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    width: 100%;
+    box-sizing: border-box; /* keeps padding from pushing the element wider than its container */
+    padding: 8px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    font-size: 14px;
+    background-color: #ffffff;
+    color: #333333;
+  }
+ 
+  textarea {
+    min-height: 90px;
+    resize: vertical;
+  }
+ 
+  .radio-options label {
+    display: inline-block;
+    font-weight: normal;
+    margin-right: 15px;
+  }
+ 
+  .radio-options input {
+    margin-right: 5px;
+  }
+ 
+  /* Error text is hidden by default and only shown by JavaScript when a field fails validation */
+  .error-message {
+    display: none;
+    color: #c0392b;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+ 
+  .error-message.show {
+    display: block;
+  }
+ 
+  input.invalid,
+  textarea.invalid {
+    border-color: #c0392b;
+    background-color: #fdf1f0;
+  }
+ 
+  .buttons {
+    margin-top: 20px;
+  }
+ 
+  button {
+    padding: 8px 18px;
+    font-size: 14px;
+    border-radius: 3px;
+    border: 1px solid #888;
+    background-color: #f0f0f0;
+    color: #333333;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+ 
+  button:hover {
+    background-color: #e2e2e2;
+    color: #333333;
+  }
+ 
+  /* Preview / confirmation panels are hidden until JavaScript decides to display them */
+  #previewSection,
+  #confirmationSection {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fafafa;
+  }
+ 
+  #previewSection h2,
+  #confirmationSection h2 {
+    font-size: 16px;
+    margin-top: 0;
+  }
+ 
+  #previewSection p,
+  #confirmationSection p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+ 
+<div class="form-wrapper">
+  <h1>Contact Us</h1>
+ 
+  <!--
+    Default action/method is POST to a (non-existent, for this demo) server endpoint.
+    This is the path used when the visitor clicks "Send Message".
+    The "Preview" button below overrides the method/action for that one click only
+    (formmethod="GET" formaction="") so the page reloads with the entered data
+    attached to the URL as a query string, satisfying the GET-preview requirement.
+    novalidate turns off the browser's built-in validation so our own JavaScript
+    validation (with custom error messages) runs instead.
+  -->
+  <form id="contactForm" action="submit_contact.php" method="POST" novalidate>
+ 
+    <div class="field-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name">
+      <span class="error-message" id="nameError">Please enter your name.</span>
+    </div>
+ 
+    <div class="field-group">
+      <label for="email">Email:</label>
+      <input type="text" id="email" name="email">
+      <span class="error-message" id="emailError">Please enter a valid email address (e.g., name@example.com).</span>
+    </div>
+ 
+    <div class="field-group">
+      <label for="phone">Phone Number:</label>
+      <input type="text" id="phone" name="phone" placeholder="10 digits, no dashes or spaces">
+      <span class="error-message" id="phoneError">Phone number must contain exactly 10 digits.</span>
+    </div>
+ 
+    <div class="field-group">
+      <label for="message">Message:</label>
+      <textarea id="message" name="message"></textarea>
+      <span class="error-message" id="messageError">Please enter a message.</span>
+    </div>
+ 
+    <div class="field-group">
+      <label>Preferred Contact Method:</label>
+      <div class="radio-options">
+        <label><input type="radio" name="contactMethod" value="Email"> Email</label>
+        <label><input type="radio" name="contactMethod" value="Phone"> Phone</label>
+        <label><input type="radio" name="contactMethod" value="Both"> Both</label>
+      </div>
+      <span class="error-message" id="contactMethodError">Please select a preferred contact method.</span>
+    </div>
+ 
+    <div class="field-group">
+      <label for="inquiryType">Inquiry Type:</label>
+      <select id="inquiryType" name="inquiryType">
+        <option value="">Select an option</option>
+        <option value="General Inquiry">General Inquiry</option>
+        <option value="Support Request">Support Request</option>
+        <option value="Feedback">Feedback</option>
+      </select>
+    </div>
+ 
+    <div class="buttons">
+      <!-- Preview button: submits the SAME form data but via GET to the current page,
+           so the data shows up in the URL query string and can be read back by JavaScript. -->
+      <button type="submit" name="previewBtn" formmethod="GET" formaction="" formnovalidate>Preview</button>
+ 
+      <!-- Submit button: uses the form's default method/action, i.e. POST. -->
+      <button type="submit" name="submitBtn">Send Message</button>
+    </div>
+  </form>
+ 
+  <!-- Populated by JavaScript after a GET "preview" submission reloads the page with a query string -->
+  <div id="previewSection">
+    <h2>Preview of Entered Data</h2>
+    <p><strong>Name:</strong> <span id="previewName"></span></p>
+    <p><strong>Email:</strong> <span id="previewEmail"></span></p>
+    <p><strong>Phone:</strong> <span id="previewPhone"></span></p>
+    <p><strong>Message:</strong> <span id="previewMessage"></span></p>
+    <p><strong>Preferred Contact Method:</strong> <span id="previewContactMethod"></span></p>
+    <p><strong>Inquiry Type:</strong> <span id="previewInquiryType"></span></p>
+  </div>
+ 
+  <!-- Shown by JavaScript after a successful (validated) POST submission -->
+  <div id="confirmationSection">
+    <h2>Thank you!</h2>
+    <p>Your message has been submitted successfully.</p>
+  </div>
+ 
+</div>
+ 
+<script>
+  // Cache references to all the elements we need to read from / write to.
+  const contactForm = document.getElementById('contactForm');
+ 
+  const nameField = document.getElementById('name');
+  const emailField = document.getElementById('email');
+  const phoneField = document.getElementById('phone');
+  const messageField = document.getElementById('message');
+  const radioButtons = document.getElementsByName('contactMethod');
+  const inquiryTypeField = document.getElementById('inquiryType');
+ 
+  const nameError = document.getElementById('nameError');
+  const emailError = document.getElementById('emailError');
+  const phoneError = document.getElementById('phoneError');
+  const messageError = document.getElementById('messageError');
+  const contactMethodError = document.getElementById('contactMethodError');
+ 
+  const previewSection = document.getElementById('previewSection');
+  const confirmationSection = document.getElementById('confirmationSection');
+ 
+  /**
+   * Shows or hides a single field's error message and toggles the
+   * "invalid" style on the input, based on whether it passed validation.
+   */
+  function setFieldValidity(inputElement, errorElement, isValid) {
+    if (isValid) {
+      errorElement.classList.remove('show');
+      inputElement.classList.remove('invalid');
+    } else {
+      errorElement.classList.add('show');
+      inputElement.classList.add('invalid');
+    }
+    return isValid;
+  }
+ 
+  /**
+   * Runs all client-side validation rules required by the assignment:
+   *   1. Name, email, phone, and message must all be filled in.
+   *   2. Email must be in a valid email format.
+   *   3. Phone number must contain exactly 10 digits.
+   */
+  function validateForm() {
+    const nameValid = setFieldValidity(nameField, nameError, nameField.value.trim() !== '');
+    const messageValid = setFieldValidity(messageField, messageError, messageField.value.trim() !== '');
+ 
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailValid = setFieldValidity(emailField, emailError, emailPattern.test(emailField.value.trim()));
+ 
+    const phonePattern = /^\d{10}$/;
+    const phoneValid = setFieldValidity(phoneField, phoneError, phonePattern.test(phoneField.value.trim()));
+ 
+    let contactMethodValid = false;
+    for (const radio of radioButtons) {
+      if (radio.checked) {
+        contactMethodValid = true;
+        break;
+      }
+    }
+    setFieldValidity(radioButtons[0], contactMethodError, contactMethodValid);
+ 
+    return nameValid && emailValid && phoneValid && messageValid && contactMethodValid;
+  }
+ 
+  /**
+   * Handles the form's submit event for BOTH buttons (Preview and Send Message),
+   * since they share the same <form>. e.submitter tells us which button
+   * was actually clicked so we can branch the behavior.
+   */
+  contactForm.addEventListener('submit', function (event) {
+    const isValid = validateForm();
+ 
+    if (!isValid) {
+      event.preventDefault();
+      return;
+    }
+ 
+    const clickedButton = event.submitter ? event.submitter.name : '';
+ 
+    if (clickedButton === 'submitBtn') {
+      // Simulate a successful POST since this static page has no live backend.
+      event.preventDefault();
+      previewSection.style.display = 'none';
+      confirmationSection.style.display = 'block';
+      contactForm.reset();
+    }
+    // If "Preview" was clicked, we deliberately do NOT preventDefault():
+    // the browser performs its normal GET submission, reloading this page
+    // with the data in the URL query string (e.g., ?name=...&email=...).
+  });
+ 
+  /**
+   * Runs on page load. If the URL contains a query string (meaning the user
+   * just clicked "Preview"), parses it and displays the values in the
+   * preview panel, then refills the form so nothing is lost.
+   */
+  function loadPreviewFromQueryString() {
+    const params = new URLSearchParams(window.location.search);
+ 
+    if ([...params].length === 0) {
+      return;
+    }
+ 
+    nameField.value = params.get('name') || '';
+    emailField.value = params.get('email') || '';
+    phoneField.value = params.get('phone') || '';
+    messageField.value = params.get('message') || '';
+    inquiryTypeField.value = params.get('inquiryType') || '';
+ 
+    const selectedMethod = params.get('contactMethod');
+    for (const radio of radioButtons) {
+      radio.checked = (radio.value === selectedMethod);
+    }
+ 
+    document.getElementById('previewName').textContent = nameField.value;
+    document.getElementById('previewEmail').textContent = emailField.value;
+    document.getElementById('previewPhone').textContent = phoneField.value;
+    document.getElementById('previewMessage').textContent = messageField.value;
+    document.getElementById('previewContactMethod').textContent = selectedMethod || '(none selected)';
+    document.getElementById('previewInquiryType').textContent = inquiryTypeField.value || '(none selected)';
+ 
+    previewSection.style.display = 'block';
+  }
+ 
+  loadPreviewFromQueryString();
+</script>
+ 
+</body>
+</html>
+ 
